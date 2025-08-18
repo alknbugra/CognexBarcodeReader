@@ -13,12 +13,10 @@ Bu proje, **Cognex DM280X** barkod okuyucu ile **serial port** üzerinden haberl
 - Visual Studio 2019 veya daha yeni bir sürüm
 - Seri port bağlantısı için uygun kablo
 
-## Kurulum
-
-Kullanım
-Uygulamayı başlatın.
-Seri port üzerinden otomatik bağlanın.
-Barkod okutun ve verileri görüntüleyin.
+## Kullanım
+- Uygulamayı başlatın.
+- Seri port üzerinden otomatik bağlanın.
+- Barkod okutun ve verileri görüntüleyin.
 
 ## Görsel
 ![Barkod Okuma](images/okuma_ekran.jpg)
