@@ -7,6 +7,10 @@
 - Barkod okuma
 - Okunan barkod verilerini ekran görüntüsü ile birlikte gösterme
 
+# Görsel
+![Barkod Okuma](images/DM280X.jpg)
+![Barkod Okuma](images/Running.gif)
+
 # Kurulum
 
 ```bash
@@ -28,6 +32,3 @@ cd CognexBarcodeReader
 - (Kod snippet'inle ilgili örnek ekleyebilirsin)
 
 
-# Görsel
-![Barkod Okuma](images/DM280X.jpg)
-![Barkod Okuma](images/Running.gif)
