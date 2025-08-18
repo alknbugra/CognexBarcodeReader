@@ -2,12 +2,12 @@
 
 **Cognex DM280X barkod okuyucu ile Type-C kablosu üzerinden seri port iletiimi sağlayan örnek uygulama.**
 
-##  Özellikler
+#Özellikler
 
 - Barkod okuma
 - Okunan barkod verilerini ekran görüntüsü ile birlikte gösterme
 
-##  Kurulum
+# Kurulum
 
 ```bash
 # Repo'yu klonla
@@ -28,6 +28,6 @@ cd CognexBarcodeReader
 - (Kod snippet'inle ilgili örnek ekleyebilirsin)
 
 
-## Görsel
+# Görsel
 ![Barkod Okuma](images/DM280X.jpg)
 ![Barkod Okuma](images/Running.gif)
