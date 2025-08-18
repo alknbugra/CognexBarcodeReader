@@ -1,0 +1,21 @@
+# Build klasörleri
+bin/
+obj/
+
+# Visual Studio dosyaları
+.vs/
+*.user
+*.suo
+*.pdb
+
+# Paketler
+*.nupkg
+packages/
+
+# Diğer geçici dosyalar
+*.log
+
+# Sample2CognexBarcodeReader altındaki build klasörleri
+Sample2CognexBarcodeReader/bin/
+Sample2CognexBarcodeReader/obj/
+
