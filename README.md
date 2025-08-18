@@ -22,3 +22,4 @@ Bu proje, **Cognex DM280X** barkod okuyucu ile **serial port** üzerinden haberl
 ![Barkod Okuma](images/okuma_ekran.jpg)
 ![Barkod Okuma](images/okuma_ekran1.jpg)
 ![Barkod Okuma](images/okuma_ekran2.png)
+![Barkod Okuma](images/DM280X.jpg)
