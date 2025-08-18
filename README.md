@@ -1,25 +1,33 @@
-# Cognex Barcode Reader SerialPort Communication
+# CognexBarcodeReader
 
-Bu proje, **Cognex DM280X** barkod okuyucu ile **serial port** üzerinden haberleşmeyi sağlayan örnek bir uygulamadır.
+**Cognex DM280X barkod okuyucu ile Type-C kablosu üzerinden seri port iletiimi sağlayan örnek uygulama.**
 
-## Özellikler
+##  Özellikler
 
 - Barkod okuma
-- Görüntü ekrana yansıtma
+- Okunan barkod verilerini ekran görüntüsü ile birlikte gösterme
 
-## Gereksinimler
+##  Kurulum
 
-- .NET Framework 4.7.2 veya daha yüksek
-- Visual Studio 2019 veya daha yeni bir sürüm
-- Seri port bağlantısı için uygun kablo
+```bash
+# Repo'yu klonla
+git clone https://github.com/alknbugra/CognexBarcodeReader.git
 
-## Kullanım
-- Uygulamayı başlatın.
-- Seri port üzerinden otomatik bağlanın.
-- Barkod okutun ve verileri görüntüleyin.
+# Dizine gir
+cd CognexBarcodeReader
+
+# Gerekli bağımlılıkları yükle
+- (C# projesi olduğundan, örnek Visual Studio ortamında açılabilir veya dotnet CLI ile)
+- dotnet restore veya Visual Studio ile sln dosyasını aç
+
+# Uygulamayı çalıştır
+- Visual Studio üzerinden F5 ile ya da dotnet run komutu (varsa) ile çalıştır
+
+# Kullanım
+- Uygulama ekranında okunan barkod verileri ekranda görüntülenir
+- (Kod snippet'inle ilgili örnek ekleyebilirsin)
+
 
 ## Görsel
-![Barkod Okuma](images/okuma_ekran.jpg)
-![Barkod Okuma](images/okuma_ekran1.jpg)
-![Barkod Okuma](images/okuma_ekran2.png)
 ![Barkod Okuma](images/DM280X.jpg)
+![Barkod Okuma](images/Running.gif)
