@@ -1,6 +1,8 @@
+test 123
+
 # CleanCognexRepo
 
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Build](https://img.shields.io/badge/Build-Passing-brightgreen.svg)
 ![Platform](https://img.shields.io/badge/Platform-.NET-blueviolet.svg)
 
