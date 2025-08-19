@@ -1,11 +1,10 @@
+# CleanCognexRepo
+
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+![Build](https://img.shields.io/badge/Build-Passing-brightgreen.svg)
+![Platform](https://img.shields.io/badge/Platform-.NET-blueviolet.svg)
+
 # CognexBarcodeReader
-
-![Build Status](https://img.shields.io/github/actions/workflow/status/alknbugra/CognexBarcodeReader/build.yml?branch=main)
-![License](https://img.shields.io/github/license/alknbugra/CognexBarcodeReader)
-![Release](https://img.shields.io/github/v/release/alknbugra/CognexBarcodeReader)
-![Issues](https://img.shields.io/github/issues/alknbugra/CognexBarcodeReader)
-![Stars](https://img.shields.io/github/stars/alknbugra/CognexBarcodeReader?style=social)
-
 
 **Cognex DM280X barkod okuyucu ile Type-C kablosu üzerinden seri port iletiimi sağlayan örnek uygulama.**
 
