@@ -19,10 +19,8 @@
 - Okunan barkod verilerini ekran görüntüsü ile birlikte gösterme
 
 # Görsel
-![Barkod Okuma](images/Picture1.png)
 ![Barkod Okuma](images/Picture3.jpg)
 ![Barkod Okuma](images/Picture4.jpg)
-![Barkod Okuma](images/Picture2.gif)
 ![Barkod Okuma](images/AppGif.gif)
 
 # Kurulum
