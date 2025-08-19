@@ -1,5 +1,12 @@
 # CognexBarcodeReader
 
+![Build Status](https://img.shields.io/github/actions/workflow/status/alknbugra/CognexBarcodeReader/build.yml?branch=main)
+![License](https://img.shields.io/github/license/alknbugra/CognexBarcodeReader)
+![Release](https://img.shields.io/github/v/release/alknbugra/CognexBarcodeReader)
+![Issues](https://img.shields.io/github/issues/alknbugra/CognexBarcodeReader)
+![Stars](https://img.shields.io/github/stars/alknbugra/CognexBarcodeReader?style=social)
+
+
 **Cognex DM280X barkod okuyucu ile Type-C kablosu üzerinden seri port iletiimi sağlayan örnek uygulama.**
 
 #Özellikler
@@ -31,8 +38,3 @@ cd CognexBarcodeReader
 - Uygulama ekranında okunan barkod verileri ekranda görüntülenir
 - (Kod snippet'inle ilgili örnek ekleyebilirsin)
 
-
-![Build Status](https://img.shields.io/github/actions/workflow/status/alknbugra/CognexBarcodeReader/build.yml?branch=main)
-![License](https://img.shields.io/github/license/alknbugra/CognexBarcodeReader)
-![Release](https://img.shields.io/github/v/release/alknbugra/CognexBarcodeReader)
-![Issues](https://img.shields.io/github/issues/alknbugra/CognexBarcodeReader)
