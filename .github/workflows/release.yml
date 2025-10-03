@@ -12,7 +12,6 @@ on:
         type: string
 
 env:
-  DOTNET_VERSION: '4.8'
   SOLUTION_FILE: 'Sample2CognexBarcodeReader/Sample2CognexBarcodeReader.sln'
   PROJECT_FILE: 'Sample2CognexBarcodeReader/Sample2CognexBarcodeReader/Sample2CognexBarcodeReader.csproj'
 
@@ -39,18 +38,18 @@ jobs:
           echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
         fi
         
-    - name: 🔧 Setup .NET Framework
-      uses: actions/setup-dotnet@v4
+    - name: 🔧 Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.3
       with:
-        dotnet-version: '4.8'
+        msbuild-architecture: 'x64'
         
-    - name: 📦 Restore packages
+    - name: 📦 Restore NuGet packages
       run: |
-        dotnet restore ${{ env.SOLUTION_FILE }}
+        nuget restore ${{ env.SOLUTION_FILE }}
         
     - name: 🏗️ Build release
       run: |
-        dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore /p:GenerateDocumentationFile=true
+        msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=Release /p:Platform="Any CPU" /p:GenerateDocumentationFile=true /p:RestorePackages=false
         
     - name: 📚 Generate changelog
       id: changelog
@@ -92,18 +91,18 @@ jobs:
     - name: 📥 Checkout code
       uses: actions/checkout@v4
       
-    - name: 🔧 Setup .NET Framework
-      uses: actions/setup-dotnet@v4
+    - name: 🔧 Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.3
       with:
-        dotnet-version: '4.8'
+        msbuild-architecture: 'x64'
         
-    - name: 📦 Restore packages
+    - name: 📦 Restore NuGet packages
       run: |
-        dotnet restore ${{ env.SOLUTION_FILE }}
+        nuget restore ${{ env.SOLUTION_FILE }}
         
     - name: 🏗️ Build release
       run: |
-        dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore /p:GenerateDocumentationFile=true
+        msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=Release /p:Platform="Any CPU" /p:GenerateDocumentationFile=true /p:RestorePackages=false
         
     - name: 📦 Create ZIP package
       run: |
