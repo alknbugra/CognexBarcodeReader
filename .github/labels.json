@@ -1,0 +1,157 @@
+[
+  {
+    "name": "bug",
+    "color": "d73a4a",
+    "description": "Bir şey çalışmıyor"
+  },
+  {
+    "name": "enhancement",
+    "color": "a2eeef",
+    "description": "Yeni özellik veya iyileştirme"
+  },
+  {
+    "name": "question",
+    "color": "d876e3",
+    "description": "Daha fazla bilgi gerekiyor"
+  },
+  {
+    "name": "help-wanted",
+    "color": "008672",
+    "description": "Topluluk yardımı aranıyor"
+  },
+  {
+    "name": "good first issue",
+    "color": "7057ff",
+    "description": "Yeni katkıda bulunanlar için iyi"
+  },
+  {
+    "name": "priority: high",
+    "color": "ff0000",
+    "description": "Yüksek öncelik"
+  },
+  {
+    "name": "priority: medium",
+    "color": "ffa500",
+    "description": "Orta öncelik"
+  },
+  {
+    "name": "priority: low",
+    "color": "00ff00",
+    "description": "Düşük öncelik"
+  },
+  {
+    "name": "status: needs-triage",
+    "color": "f9d0c4",
+    "description": "İnceleme bekliyor"
+  },
+  {
+    "name": "status: in-progress",
+    "color": "0075ca",
+    "description": "Üzerinde çalışılıyor"
+  },
+  {
+    "name": "status: blocked",
+    "color": "ff0000",
+    "description": "Engellenmiş"
+  },
+  {
+    "name": "status: resolved",
+    "color": "00ff00",
+    "description": "Çözüldü"
+  },
+  {
+    "name": "type: bug",
+    "color": "d73a4a",
+    "description": "Hata raporu"
+  },
+  {
+    "name": "type: feature",
+    "color": "a2eeef",
+    "description": "Özellik isteği"
+  },
+  {
+    "name": "type: documentation",
+    "color": "0075ca",
+    "description": "Dokümantasyon"
+  },
+  {
+    "name": "type: refactoring",
+    "color": "7057ff",
+    "description": "Kod yeniden düzenleme"
+  },
+  {
+    "name": "type: performance",
+    "color": "ffa500",
+    "description": "Performans iyileştirmesi"
+  },
+  {
+    "name": "type: security",
+    "color": "ff0000",
+    "description": "Güvenlik"
+  },
+  {
+    "name": "area: core",
+    "color": "0e8a16",
+    "description": "Ana proje kodu"
+  },
+  {
+    "name": "area: examples",
+    "color": "0e8a16",
+    "description": "Kullanım örnekleri"
+  },
+  {
+    "name": "area: documentation",
+    "color": "0e8a16",
+    "description": "Dokümantasyon"
+  },
+  {
+    "name": "area: ci-cd",
+    "color": "0e8a16",
+    "description": "CI/CD pipeline"
+  },
+  {
+    "name": "area: ui",
+    "color": "0e8a16",
+    "description": "Kullanıcı arayüzü"
+  },
+  {
+    "name": "area: api",
+    "color": "0e8a16",
+    "description": "API"
+  },
+  {
+    "name": "area: hardware",
+    "color": "0e8a16",
+    "description": "Donanım entegrasyonu"
+  },
+  {
+    "name": "breaking-change",
+    "color": "ff0000",
+    "description": "Kırıcı değişiklik"
+  },
+  {
+    "name": "needs-review",
+    "color": "ffa500",
+    "description": "Review bekliyor"
+  },
+  {
+    "name": "ready-to-merge",
+    "color": "00ff00",
+    "description": "Merge'e hazır"
+  },
+  {
+    "name": "duplicate",
+    "color": "cfd3d7",
+    "description": "Tekrar eden issue"
+  },
+  {
+    "name": "invalid",
+    "color": "e4e669",
+    "description": "Geçersiz"
+  },
+  {
+    "name": "wontfix",
+    "color": "ffffff",
+    "description": "Düzeltilmeyecek"
+  }
+]

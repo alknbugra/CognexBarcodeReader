@@ -1,0 +1,27 @@
+# CognexBarcodeReader - Code Owners
+# Bu dosya proje dosyalarının sahiplerini belirler
+
+# Global owners - tüm dosyalar için
+* @alknbugra
+
+# Ana proje dosyaları
+/Sample2CognexBarcodeReader/ @alknbugra
+
+# Dokümantasyon
+/README.md @alknbugra
+/CHANGELOG.md @alknbugra
+/API_DOCUMENTATION.md @alknbugra
+/CONTRIBUTING.md @alknbugra
+
+# GitHub konfigürasyonu
+/.github/ @alknbugra
+
+# Örnekler
+/Examples/ @alknbugra
+
+# Lisans ve yasal dosyalar
+/LICENSE @alknbugra
+/.gitignore @alknbugra
+
+# Wiki
+/WIKI_HOME.md @alknbugra

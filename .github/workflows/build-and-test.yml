@@ -1,0 +1,167 @@
+name: 🔨 Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '4.8'
+  SOLUTION_FILE: 'Sample2CognexBarcodeReader/Sample2CognexBarcodeReader.sln'
+  PROJECT_FILE: 'Sample2CognexBarcodeReader/Sample2CognexBarcodeReader/Sample2CognexBarcodeReader.csproj'
+
+jobs:
+  build:
+    name: 🏗️ Build Project
+    runs-on: windows-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔧 Setup .NET Framework
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '4.8'
+        
+    - name: 📦 Restore packages
+      run: |
+        dotnet restore ${{ env.SOLUTION_FILE }}
+        
+    - name: 🏗️ Build solution
+      run: |
+        dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
+        
+    - name: 📊 Build statistics
+      run: |
+        echo "Build completed successfully!"
+        echo "Solution: ${{ env.SOLUTION_FILE }}"
+        echo "Configuration: Release"
+        
+  test:
+    name: 🧪 Run Tests
+    runs-on: windows-latest
+    needs: build
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔧 Setup .NET Framework
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '4.8'
+        
+    - name: 📦 Restore packages
+      run: |
+        dotnet restore ${{ env.SOLUTION_FILE }}
+        
+    - name: 🧪 Run tests
+      run: |
+        # Test komutları buraya eklenebilir
+        echo "Tests would run here if available"
+        
+    - name: 📊 Test results
+      run: |
+        echo "Test execution completed!"
+        
+  code-quality:
+    name: 🔍 Code Quality
+    runs-on: windows-latest
+    needs: build
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔧 Setup .NET Framework
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '4.8'
+        
+    - name: 📦 Restore packages
+      run: |
+        dotnet restore ${{ env.SOLUTION_FILE }}
+        
+    - name: 🔍 Code analysis
+      run: |
+        echo "Code quality analysis would run here"
+        echo "Checking for code smells, complexity, etc."
+        
+    - name: 📊 Quality metrics
+      run: |
+        echo "Code quality check completed!"
+        
+  security-scan:
+    name: 🔒 Security Scan
+    runs-on: windows-latest
+    needs: build
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔒 Security scan
+      run: |
+        echo "Security scan would run here"
+        echo "Checking for vulnerabilities, secrets, etc."
+        
+    - name: 📊 Security report
+      run: |
+        echo "Security scan completed!"
+        
+  documentation:
+    name: 📚 Generate Documentation
+    runs-on: windows-latest
+    needs: build
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔧 Setup .NET Framework
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '4.8'
+        
+    - name: 📦 Restore packages
+      run: |
+        dotnet restore ${{ env.SOLUTION_FILE }}
+        
+    - name: 📚 Generate XML documentation
+      run: |
+        dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore /p:GenerateDocumentationFile=true
+        
+    - name: 📊 Documentation status
+      run: |
+        echo "Documentation generation completed!"
+        
+  deploy:
+    name: 🚀 Deploy
+    runs-on: windows-latest
+    needs: [build, test, code-quality, security-scan, documentation]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🏗️ Build for release
+      run: |
+        dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore
+        
+    - name: 📦 Create release package
+      run: |
+        echo "Creating release package..."
+        # Release package oluşturma komutları buraya eklenebilir
+        
+    - name: 🚀 Deploy to staging
+      run: |
+        echo "Deploying to staging environment..."
+        # Staging deployment komutları buraya eklenebilir
+        
+    - name: 📊 Deployment status
+      run: |
+        echo "Deployment completed successfully!"

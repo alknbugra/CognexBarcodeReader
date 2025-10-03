@@ -1,275 +1,280 @@
-﻿using Cognex.DataMan.SDK;
-using Cognex.DataMan.SDK.Discovery;
-using Cognex.DataMan.SDK.Utils;
+﻿using Sample2CognexBarcodeReader.Interfaces;
+using Sample2CognexBarcodeReader.Models;
+using Sample2CognexBarcodeReader.Services;
+using Sample2CognexBarcodeReader.Utils;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
-using ConnectionState = Cognex.DataMan.SDK.ConnectionState;
 
 namespace Sample2CognexBarcodeReader
 {
+    /// <summary>
+    /// Ana uygulama formu - Cognex barkod okuyucu arayüzü
+    /// </summary>
     public partial class Form1 : Form
     {
+        #region Private Fields
 
-        private ResultCollector _results;
-        private SynchronizationContext _syncContext = null;
-        private SerSystemDiscoverer _serSystemDiscoverer = null;
-        private ISystemConnector _connector = null;
-        private DataManSystem _system = null;
-        private object _currentResultInfoSyncLock = new object();
+        private IBarcodeReaderService _barcodeReaderService;
+        private BarcodeReaderConfig _config;
 
+        #endregion
 
+        #region Constructor
+
+        /// <summary>
+        /// Form1'in yeni örneğini başlatır
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
-
-
-            // The SDK may fire events from arbitrary thread context. Therefore if you want to change
-            // the state of controls or windows from any of the SDK' events, you have to use this
-            // synchronization context to execute the event handler code on the main GUI thread.
-            _syncContext = WindowsFormsSynchronizationContext.Current;
-
+            InitializeConfiguration();
+            InitializeBarcodeReaderService();
+            SetupEventHandlers();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        #endregion
+
+        #region Initialization Methods
+
+        /// <summary>
+        /// Konfigürasyonu başlatır
+        /// </summary>
+        private void InitializeConfiguration()
+        {
+            _config = new BarcodeReaderConfig
+            {
+                Timeout = 5000,
+                Baudrate = 115200,
+                AutoDiscovery = true,
+                DebugMode = true
+            };
+        }
+
+        /// <summary>
+        /// Barkod okuyucu servisini başlatır
+        /// </summary>
+        private void InitializeBarcodeReaderService()
+        {
+            _barcodeReaderService = new CognexBarcodeReaderService(_config);
+        }
+
+        /// <summary>
+        /// Event handler'ları ayarlar
+        /// </summary>
+        private void SetupEventHandlers()
+        {
+            _barcodeReaderService.DeviceConnected += OnDeviceConnected;
+            _barcodeReaderService.DeviceDisconnected += OnDeviceDisconnected;
+            _barcodeReaderService.BarcodeRead += OnBarcodeRead;
+        }
+
+        #endregion
+
+        #region Form Events
+
+        /// <summary>
+        /// Form yüklendiğinde çağrılır
+        /// </summary>
+        private async void Form1_Load(object sender, EventArgs e)
         {
             try
             {
-
-                // Create discoverers to discover ethernet and serial port systems.
-                _serSystemDiscoverer = new SerSystemDiscoverer();
-
-                // Subscribe to the system discoved event.
-                _serSystemDiscoverer.SystemDiscovered += new SerSystemDiscoverer.SystemDiscoveredHandler(OnSerSystemDiscovered);
-
-                // Ask the discoverers to start discovering systems.
-                _serSystemDiscoverer.Discover();
+                UpdateStatusLabel("Servis başlatılıyor...");
+                var success = await _barcodeReaderService.StartAsync();
+                
+                if (success)
+                {
+                    UpdateStatusLabel("Servis başlatıldı. Cihaz aranıyor...");
+                }
+                else
+                {
+                    UpdateStatusLabel("Servis başlatılamadı!");
+                    ShowErrorMessage("Barkod okuyucu servisi başlatılamadı. Lütfen cihazınızı kontrol edin.");
+                }
             }
             catch (Exception ex)
             {
-                CleanupConnection();
-
-                Console.WriteLine("Failed to connect: " + ex.ToString());
+                UpdateStatusLabel($"Hata: {ex.Message}");
+                ShowErrorMessage($"Uygulama başlatılırken hata oluştu: {ex.Message}");
             }
         }
 
-        private void OnSystemConnected(object sender, EventArgs args)
+        /// <summary>
+        /// Form kapatılırken çağrılır
+        /// </summary>
+        protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            _syncContext.Post(
-                delegate
-                {
-                    Console.WriteLine("System connected");
-                },
-                null);
-        }
-        private void OnSystemDisconnected(object sender, EventArgs args)
-        {
-            _syncContext.Post(
-                delegate
-                {
-                    Console.WriteLine("System disconnected");
-                },
-                null);
-        }
-
-        private void Results_ComplexResultCompleted(object sender, ComplexResult e)
-        {
-            _syncContext.Post(
-                delegate
-                {
-                    ShowResult(e);
-                },
-                null);
-        }
-        private void ShowResult(ComplexResult complexResult)
-        {
-            List<Image> images = new List<Image>();
-            List<string> image_graphics = new List<string>();
-            string read_result = null;
-            int result_id = -1;
-            ResultTypes collected_results = ResultTypes.None;
-
-            // Take a reference or copy values from the locked result info object. This is done
-            // so that the lock is used only for a short period of time.
-            lock (_currentResultInfoSyncLock)
+            try
             {
-                foreach (var simple_result in complexResult.SimpleResults)
-                {
-                    collected_results |= simple_result.Id.Type;
-
-                    switch (simple_result.Id.Type)
-                    {
-                        case ResultTypes.Image:
-                            Image image = ImageArrivedEventArgs.GetImageFromImageBytes(simple_result.Data);
-                            if (image != null)
-                                images.Add(image);
-                            break;
-
-                        case ResultTypes.ImageGraphics:
-                            image_graphics.Add(simple_result.GetDataAsString());
-                            break;
-
-                        case ResultTypes.ReadXml:
-                            read_result = GetReadStringFromResultXml(simple_result.GetDataAsString());
-                            result_id = simple_result.Id.Id;
-                            break;
-
-                        case ResultTypes.ReadString:
-                            read_result = simple_result.GetDataAsString();
-                            result_id = simple_result.Id.Id;
-                            break;
-                    }
-                }
+                _barcodeReaderService?.StopAsync().Wait();
+                _barcodeReaderService?.Dispose();
             }
-
-            Console.WriteLine(string.Format("Complex result arrived: resultId = {0}, read result = {1}", result_id, read_result));
-
-            if (images.Count > 0)
+            catch (Exception ex)
             {
-                Image first_image = images[0];
+                Console.WriteLine($"Form kapatılırken hata oluştu: {ex.Message}");
+            }
+            
+            base.OnFormClosing(e);
+        }
 
-                Size image_size = Gui.FitImageInControl(first_image.Size, picResultImage.Size);
-                Image fitted_image = Gui.ResizeImageToBitmap(first_image, image_size);
+        #endregion
 
-                if (image_graphics.Count > 0)
+        #region Barcode Reader Service Events
+
+        /// <summary>
+        /// Cihaz bağlandığında çağrılır
+        /// </summary>
+        private void OnDeviceConnected(object sender, EventArgs e)
+        {
+            this.Invoke(new Action(() =>
+            {
+                UpdateStatusLabel("Cihaz bağlandı. Barkod okumaya hazır!");
+                UpdateConnectionStatus(true);
+            }));
+        }
+
+        /// <summary>
+        /// Cihaz bağlantısı kesildiğinde çağrılır
+        /// </summary>
+        private void OnDeviceDisconnected(object sender, EventArgs e)
+        {
+            this.Invoke(new Action(() =>
+            {
+                UpdateStatusLabel("Cihaz bağlantısı kesildi!");
+                UpdateConnectionStatus(false);
+            }));
+        }
+
+        /// <summary>
+        /// Barkod okunduğunda çağrılır
+        /// </summary>
+        private void OnBarcodeRead(object sender, BarcodeReadEventArgs e)
+        {
+            this.Invoke(new Action(() =>
+            {
+                DisplayBarcodeResult(e);
+            }));
+        }
+
+        #endregion
+
+        #region UI Update Methods
+
+        /// <summary>
+        /// Barkod sonucunu görüntüler
+        /// </summary>
+        private void DisplayBarcodeResult(BarcodeReadEventArgs e)
+        {
+            try
+            {
+                // Barkod verisini göster
+                lbReadString.Text = e.BarcodeData;
+                lbReadString.ForeColor = Color.Green;
+
+                // Barkod görüntüsünü göster
+                if (e.BarcodeImage != null)
                 {
-                    using (Graphics g = Graphics.FromImage(fitted_image))
-                    {
-                        foreach (var graphics in image_graphics)
-                        {
-                            ResultGraphics rg = GraphicsResultParser.Parse(graphics, new Rectangle(0, 0, image_size.Width, image_size.Height));
-                            ResultGraphicsRenderer.PaintResults(g, rg);
-                        }
-                    }
+                    DisplayBarcodeImage(e.BarcodeImage);
                 }
 
+                // Durum güncelle
+                UpdateStatusLabel($"Barkod okundu: {e.BarcodeData} (Tip: {e.BarcodeType})");
+            }
+            catch (Exception ex)
+            {
+                UpdateStatusLabel($"Sonuç gösterilirken hata: {ex.Message}");
+                ShowErrorMessage($"Barkod sonucu gösterilirken hata oluştu: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Barkod görüntüsünü görüntüler
+        /// </summary>
+        private void DisplayBarcodeImage(Image barcodeImage)
+        {
+            try
+            {
+                // Eski görüntüyü temizle
                 if (picResultImage.Image != null)
                 {
-                    var image = picResultImage.Image;
+                    ImageHelper.SafeDisposeImage(picResultImage.Image);
                     picResultImage.Image = null;
-                    image.Dispose();
                 }
 
-                picResultImage.Image = fitted_image;
-                picResultImage.Invalidate();
-            }
+                // Yeni görüntüyü boyutlandır ve göster
+                var imageSize = ImageHelper.FitImageInControl(barcodeImage.Size, picResultImage.Size);
+                var resizedImage = ImageHelper.ResizeImageToBitmap(barcodeImage, imageSize);
 
-            if (read_result != null)
-                lbReadString.Text = read_result;
-        }
-        private string GetReadStringFromResultXml(string resultXml)
-        {
-            try
-            {
-                XmlDocument doc = new XmlDocument();
-
-                doc.LoadXml(resultXml);
-
-                XmlNode full_string_node = doc.SelectSingleNode("result/general/full_string");
-
-                if (full_string_node != null && _system != null && _system.State == ConnectionState.Connected)
+                if (resizedImage != null)
                 {
-                    XmlAttribute encoding = full_string_node.Attributes["encoding"];
-                    if (encoding != null && encoding.InnerText == "base64")
-                    {
-                        if (!string.IsNullOrEmpty(full_string_node.InnerText))
-                        {
-                            byte[] code = Convert.FromBase64String(full_string_node.InnerText);
-                            return _system.Encoding.GetString(code, 0, code.Length);
-                        }
-                        else
-                        {
-                            return "";
-                        }
-                    }
-
-                    return full_string_node.InnerText;
+                    picResultImage.Image = resizedImage;
+                    picResultImage.Invalidate();
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Görüntü gösterilirken hata oluştu: {ex.Message}");
             }
-
-            return "";
         }
 
-
-        private void Results_SimpleResultDropped(object sender, SimpleResult e)
+        /// <summary>
+        /// Durum etiketini günceller
+        /// </summary>
+        private void UpdateStatusLabel(string message)
         {
-            _syncContext.Post(
-                delegate
-                {
-                    ReportDroppedResult(e);
-                },
-                null);
+            // Eğer status label yoksa, read string label'ını kullan
+            if (lbReadString != null)
+            {
+                lbReadString.Text = message;
+                lbReadString.ForeColor = Color.Blue;
+            }
         }
-        private void ReportDroppedResult(SimpleResult result)
+
+        /// <summary>
+        /// Bağlantı durumunu günceller
+        /// </summary>
+        private void UpdateConnectionStatus(bool isConnected)
         {
-            Console.WriteLine(string.Format("Partial result dropped: {0}, id={1}", result.Id.Type.ToString(), result.Id.Id));
+            this.BackColor = isConnected ? Color.LightGreen : Color.LightCoral;
+            this.Text = isConnected ? "Cognex Barcode Reader - Bağlı" : "Cognex Barcode Reader - Bağlantı Yok";
         }
 
+        #endregion
 
+        #region Helper Methods
 
-
-        private void OnSerSystemDiscovered(SerSystemDiscoverer.SystemInfo systemInfo)
+        /// <summary>
+        /// Hata mesajı gösterir
+        /// </summary>
+        private void ShowErrorMessage(string message)
         {
-
-            Console.WriteLine(string.Format("Cihaz bulundu: {0}, id={1}", systemInfo.Name, systemInfo.PortName));
-
-            SerSystemConnector conn = new SerSystemConnector(systemInfo.PortName, systemInfo.Baudrate);
-
-            _connector = conn;
-
-            _system = new DataManSystem(_connector);
-            _system.DefaultTimeout = 5000;
-
-            // Subscribe to events that are signalled when the system is connected / disconnected.
-            _system.SystemConnected += new SystemConnectedHandler(OnSystemConnected);
-            _system.SystemDisconnected += new SystemDisconnectedHandler(OnSystemDisconnected);
-
-            // Subscribe to events that are signalled when the device sends auto-responses.
-            ResultTypes requested_result_types = ResultTypes.ReadXml | ResultTypes.Image | ResultTypes.ImageGraphics;
-            _results = new ResultCollector(_system, requested_result_types);
-            _results.ComplexResultCompleted += Results_ComplexResultCompleted;
-            _results.SimpleResultDropped += Results_SimpleResultDropped;
-
-            _system.Connect();
-
-            try
-            {
-                _system.SetResultTypes(requested_result_types);
-            }
-            catch
-            {
-            }
-
-            while (true)
-            {
-                Thread.Sleep(20);
-            }
-
+            MessageBox.Show(message, "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private void CleanupConnection()
+        /// <summary>
+        /// Bilgi mesajı gösterir
+        /// </summary>
+        private void ShowInfoMessage(string message)
         {
-            if (null != _system)
-            {
-                _system.SystemConnected -= OnSystemConnected;
-                _system.SystemDisconnected -= OnSystemDisconnected;
-            }
-
-            _connector = null;
-            _system = null;
+            MessageBox.Show(message, "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        #endregion
 
+        #region Public Methods
+
+        /// <summary>
+        /// Servis durumunu kontrol eder
+        /// </summary>
+        public bool IsServiceRunning => _barcodeReaderService?.IsRunning ?? false;
+
+        /// <summary>
+        /// Cihaz bağlantı durumunu kontrol eder
+        /// </summary>
+        public bool IsDeviceConnected => _barcodeReaderService?.IsConnected ?? false;
+
+        #endregion
     }
 }

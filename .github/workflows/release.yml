@@ -1,0 +1,159 @@
+name: 🚀 Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v2.1.0)'
+        required: true
+        type: string
+
+env:
+  DOTNET_VERSION: '4.8'
+  SOLUTION_FILE: 'Sample2CognexBarcodeReader/Sample2CognexBarcodeReader.sln'
+  PROJECT_FILE: 'Sample2CognexBarcodeReader/Sample2CognexBarcodeReader/Sample2CognexBarcodeReader.csproj'
+
+jobs:
+  create-release:
+    name: 📦 Create Release
+    runs-on: windows-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_id: ${{ steps.create_release.outputs.id }}
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: 🏷️ Get version
+      id: get_version
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: 🔧 Setup .NET Framework
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '4.8'
+        
+    - name: 📦 Restore packages
+      run: |
+        dotnet restore ${{ env.SOLUTION_FILE }}
+        
+    - name: 🏗️ Build release
+      run: |
+        dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore /p:GenerateDocumentationFile=true
+        
+    - name: 📚 Generate changelog
+      id: changelog
+      run: |
+        echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+        echo "## 🎉 Release ${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo "### ✨ New Features" >> $GITHUB_OUTPUT
+        echo "- Feature 1" >> $GITHUB_OUTPUT
+        echo "- Feature 2" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo "### 🐛 Bug Fixes" >> $GITHUB_OUTPUT
+        echo "- Bug fix 1" >> $GITHUB_OUTPUT
+        echo "- Bug fix 2" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo "### 📚 Documentation" >> $GITHUB_OUTPUT
+        echo "- Updated README" >> $GITHUB_OUTPUT
+        echo "- Added API docs" >> $GITHUB_OUTPUT
+        echo "EOF"
+        
+    - name: 📦 Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_version.outputs.VERSION }}
+        release_name: 'CognexBarcodeReader ${{ steps.get_version.outputs.VERSION }}'
+        body: ${{ steps.changelog.outputs.CHANGELOG }}
+        draft: false
+        prerelease: false
+        
+  build-and-package:
+    name: 🏗️ Build and Package
+    runs-on: windows-latest
+    needs: create-release
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔧 Setup .NET Framework
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '4.8'
+        
+    - name: 📦 Restore packages
+      run: |
+        dotnet restore ${{ env.SOLUTION_FILE }}
+        
+    - name: 🏗️ Build release
+      run: |
+        dotnet build ${{ env.SOLUTION_FILE }} --configuration Release --no-restore /p:GenerateDocumentationFile=true
+        
+    - name: 📦 Create ZIP package
+      run: |
+        $version = "${{ github.ref_name }}"
+        $zipName = "CognexBarcodeReader-$version.zip"
+        
+        # Ana proje dosyalarını kopyala
+        Copy-Item -Path "Sample2CognexBarcodeReader\Sample2CognexBarcodeReader\bin\Release\*" -Destination "release" -Recurse -Force
+        
+        # Dokümantasyon dosyalarını kopyala
+        Copy-Item -Path "README.md" -Destination "release" -Force
+        Copy-Item -Path "CHANGELOG.md" -Destination "release" -Force
+        Copy-Item -Path "LICENSE" -Destination "release" -Force
+        Copy-Item -Path "API_DOCUMENTATION.md" -Destination "release" -Force
+        Copy-Item -Path "CONTRIBUTING.md" -Destination "release" -Force
+        
+        # Examples klasörünü kopyala
+        Copy-Item -Path "Examples" -Destination "release\Examples" -Recurse -Force
+        
+        # ZIP oluştur
+        Compress-Archive -Path "release\*" -DestinationPath $zipName -Force
+        
+        echo "ZIP_NAME=$zipName" >> $env:GITHUB_OUTPUT
+        
+    - name: 📦 Upload release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create-release.outputs.upload_url }}
+        asset_path: ${{ steps.create_zip.outputs.ZIP_NAME }}
+        asset_name: ${{ steps.create_zip.outputs.ZIP_NAME }}
+        asset_content_type: application/zip
+        
+  notify:
+    name: 📢 Notify
+    runs-on: windows-latest
+    needs: [create-release, build-and-package]
+    if: always()
+    
+    steps:
+    - name: 📢 Release notification
+      run: |
+        echo "Release ${{ github.ref_name }} has been created!"
+        echo "Download: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}"
+        
+    - name: 📊 Release summary
+      run: |
+        echo "## 🎉 Release Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status**: ✅ Success" >> $GITHUB_STEP_SUMMARY
+        echo "- **Download**: [Release Page](https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }})" >> $GITHUB_STEP_SUMMARY
+        echo "- **Changelog**: [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md)" >> $GITHUB_STEP_SUMMARY

@@ -1,16 +1,21 @@
 ﻿namespace Sample2CognexBarcodeReader
 {
+    /// <summary>
+    /// Ana uygulama formu - Cognex barkod okuyucu arayüzü
+    /// Bu form barkod okuma sonuçlarını görüntüler ve kullanıcı etkileşimini sağlar.
+    /// </summary>
     partial class Form1
     {
         /// <summary>
-        /// Required designer variable.
+        /// Windows Forms tasarımcısı tarafından kullanılan bileşenler.
+        /// Bu değişken null değilse, yönetilen kaynaklar dispose edilir.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        /// Clean up any resources being used.
+        /// Kullanılan tüm kaynakları temizler.
         /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// <param name="disposing">Yönetilen kaynakların dispose edilip edilmeyeceğini belirler.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -23,8 +28,8 @@
         #region Windows Form Designer generated code
 
         /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
+        /// Tasarımcı desteği için gerekli metod - bu metodun içeriğini kod düzenleyici ile değiştirmeyin.
+        /// Windows Forms Designer tarafından otomatik oluşturulan UI bileşenlerini başlatır.
         /// </summary>
         private void InitializeComponent()
         {
@@ -78,9 +83,24 @@
 
         #endregion
 
+        #region UI Controls
+
+        /// <summary>
+        /// Ana sonuç paneli - barkod okuma sonuçlarını içerir
+        /// </summary>
         private System.Windows.Forms.Panel groupBox3;
+
+        /// <summary>
+        /// Okunan barkod verisini gösteren etiket
+        /// </summary>
         private System.Windows.Forms.Label lbReadString;
+
+        /// <summary>
+        /// Barkod görüntüsünü gösteren resim kutusu
+        /// </summary>
         private System.Windows.Forms.PictureBox picResultImage;
+
+        #endregion
     }
 }
 
