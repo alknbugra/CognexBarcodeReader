@@ -204,9 +204,8 @@ Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır.
 
 **Buğra Alkın** - [@alknbugra](https://github.com/alknbugra)
 
-- 🔗 **LinkedIn:** [Profiliniz]
-- 📧 **Email:** [email@example.com]
-- 🌐 **Website:** [websiteniz.com]
+- 🔗 **LinkedIn:** [@https://github.com/alknbugra](https://github.com/alknbugra)
+- 📧 **Email:** [alknbugra@gmail.com](mailto:alknbugra@gmail.com)
 
 ## 🙏 Teşekkürler
 
