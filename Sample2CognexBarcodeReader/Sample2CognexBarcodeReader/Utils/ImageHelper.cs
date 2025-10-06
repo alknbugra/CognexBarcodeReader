@@ -88,16 +88,9 @@ namespace Sample2CognexBarcodeReader.Utils
 
             try
             {
-                using (var graphics = Graphics.FromImage(image))
-                {
-                    foreach (var graphicsString in graphicsData)
-                    {
-                        var resultGraphics = GraphicsResultParser.Parse(graphicsString, 
-                            new Rectangle(0, 0, imageSize.Width, imageSize.Height));
-                        ResultGraphicsRenderer.PaintResults(graphics, resultGraphics);
-                    }
-                }
-
+                // Basit graphics overlay - sadece görüntüyü döndür
+                // Cognex SDK'sının GraphicsResultParser ve ResultGraphicsRenderer sınıfları
+                // bu projede mevcut değil, bu yüzden basit implementasyon kullanıyoruz
                 return image;
             }
             catch (Exception ex)

@@ -248,7 +248,7 @@ namespace Sample2CognexBarcodeReader.Services
                     {
                         await Task.Delay(_config.ThreadSleep, _cancellationTokenSource.Token);
                     }
-                    catch (OperationCanceledException)
+                    catch (System.OperationCanceledException)
                     {
                         break;
                     }

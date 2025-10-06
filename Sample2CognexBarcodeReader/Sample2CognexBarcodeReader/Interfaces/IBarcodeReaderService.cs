@@ -1,12 +1,13 @@
 using System;
 using System.Threading.Tasks;
+using Sample2CognexBarcodeReader.Models;
 
 namespace Sample2CognexBarcodeReader.Interfaces
 {
     /// <summary>
     /// Barkod okuyucu servisi için temel interface
     /// </summary>
-    public interface IBarcodeReaderService
+    public interface IBarcodeReaderService : IDisposable
     {
         /// <summary>
         /// Cihaz bağlantısı kurulduğunda tetiklenen event
